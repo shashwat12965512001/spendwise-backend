@@ -6,18 +6,18 @@ const router = express.Router();
 // Add a new transaction
 router.post("/add", async (req, res) => {
     try {
-        const { name, date, amount, category } = req.body;
+        const { name, date, amount, category, upi_id, transaction_id, expense_type } = req.body;
 
         const newTransaction = new Transaction({
             name,
             date,
             amount,
             category,
+            expense_type,
+            upi_id,
+            transaction_id,
             message: "",
-            upi_id: "",
-            transaction_id: "",
             receiver_name: "",
-            expense_type: ""
         });
 
         await newTransaction.save();
