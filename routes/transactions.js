@@ -3,6 +3,23 @@ import Transaction from "../models/Transaction.js";
 
 const router = express.Router();
 
+// GET route to fetch recent transactions with a dynamic limit
+router.get("/recent/:count?", async (req, res) => {
+    try {
+        const count = parseInt(req.params.count) || 10; // Get number from request, default to 10
+
+        // Fetch the latest transactions, sorted by createdAt in descending order
+        const transactions = await Transaction.find()
+            .sort({ createdAt: -1 }) // Sort by latest
+            .limit(count); // Get the specified number of records
+
+        res.status(200).json({ success: true, transactions });
+    } catch (error) {
+        console.error("Error fetching recent transactions:", error);
+        res.status(500).json({ success: false, error: "Server error: " + error.message });
+    }
+});
+
 // Add a new transaction
 router.post("/add", async (req, res) => {
     try {
