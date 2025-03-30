@@ -5,6 +5,7 @@ import mongoose from "mongoose";
 import transactionsRoutes from "./routes/transactions.js";
 import usersRoutes from "./routes/users.js";
 import categoryRoutes from "./routes/categories.js";
+import settingsRoutes from "./routes/settings.js";
 
 dotenv.config();
 const app = express();
@@ -21,6 +22,7 @@ mongoose.connect(process.env.MONGODB_URI, {
 app.use("/api/transactions", transactionsRoutes);
 app.use("/api/users", usersRoutes);
 app.use("/api/categories", categoryRoutes);
+app.use("/api/settings", settingsRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
