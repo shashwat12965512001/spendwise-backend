@@ -10,7 +10,9 @@ import settingsRoutes from "./routes/settings.js";
 dotenv.config();
 const app = express();
 
-app.use(cors());
+app.use(cors({
+    origin: 'https://spendwise-web-seven.vercel.app'
+}));
 app.use(express.json());
 
 mongoose.connect(process.env.MONGODB_URI, {
