@@ -11,7 +11,7 @@ dotenv.config();
 const app = express();
 
 app.use(cors({
-    origin: 'https://spendwise-web-seven.vercel.app'
+    origin: '*'
 }));
 app.use(express.json());
 
