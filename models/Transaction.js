@@ -6,11 +6,11 @@ const transactionSchema = new mongoose.Schema({
     amount: { type: Number, required: true }, // Required
     category: { type: String, required: true }, // Required
     expense_type: { type: String, required: true },
+    upi_id: { type: String, required: true },
+    transaction_id: { type: String, required: true },
 
     // Optional fields (default to empty string)
     message: { type: String, default: "" },
-    upi_id: { type: String, default: "" },
-    transaction_id: { type: String, default: "" },
     receiver_name: { type: String, default: "" },
 });
 
