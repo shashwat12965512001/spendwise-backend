@@ -57,11 +57,11 @@ router.get("/all", async (req, res) => {
 // Update a transaction
 router.put("/update/:id", async (req, res) => {
     try {
-        const { name, date, amount, category, upi_id, transaction_id } = req.body;
+        const { name, date, amount, category, upi_id, transaction_id, expense_type } = req.body;
 
         const updatedTransaction = await Transaction.findByIdAndUpdate(
             req.params.id,
-            { name, date, amount, category, upi_id, transaction_id },
+            { name, date, amount, category, upi_id, transaction_id, expense_type },
             { new: true }
         );
 
