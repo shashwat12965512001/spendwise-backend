@@ -127,6 +127,11 @@ router.post("/update-password", async (req, res) => {
 
         const { currentPassword, newPassword } = req.body;
 
+        // ✅ Validate input
+        if (!currentPassword || !newPassword) {
+            return res.status(400).json({ error: "Both current and new passwords are required." });
+        }
+
         // Check if current password is correct
         const isMatch = await bcrypt.compare(currentPassword, user.password);
         if (!isMatch) {
