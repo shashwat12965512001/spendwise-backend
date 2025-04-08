@@ -125,21 +125,21 @@ router.post("/update-password", async (req, res) => {
         const user = await User.findById(decoded.userId);
         if (!user) return res.status(404).json({ error: "User not found" });
 
-        const { currentPassword, newPassword } = req.body;
+        const { current_password, new_password } = req.body;
 
         // ✅ Validate input
-        if (!currentPassword || !newPassword) {
+        if (!current_password || !new_password) {
             return res.status(400).json({ error: "Both current and new passwords are required." });
         }
 
         // Check if current password is correct
-        const isMatch = await bcrypt.compare(currentPassword, user.password);
+        const isMatch = await bcrypt.compare(current_password, user.password);
         if (!isMatch) {
             return res.status(400).json({ error: "Current password is incorrect" });
         }
 
         // Update password
-        const hashedPassword = await bcrypt.hash(newPassword, 10);
+        const hashedPassword = await bcrypt.hash(new_password, 10);
         user.password = hashedPassword;
         await user.save();
 
