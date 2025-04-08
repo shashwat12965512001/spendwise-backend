@@ -11,11 +11,11 @@ import useragent from "express-useragent";
 dotenv.config();
 const app = express();
 
+app.use(express.json());
+app.use(useragent.express());
 app.use(cors({
     origin: '*'
 }));
-app.use(express.json());
-app.use(useragent.express());
 
 mongoose.connect(process.env.MONGODB_URI, {
     useNewUrlParser: true,
