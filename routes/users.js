@@ -110,4 +110,38 @@ router.delete("/delete/:id", async (req, res) => {
     }
 });
 
+// Update Password Route (Requires Authorization Header)
+router.post("/update-password", async (req, res) => {
+    try {
+        const authHeader = req.headers.authorization;
+
+        if (!authHeader || !authHeader.startsWith("Bearer ")) {
+            return res.status(401).json({ error: "Missing or invalid Authorization header" });
+        }
+
+        const token = authHeader.split(" ")[1];
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+        const user = await User.findById(decoded.userId);
+        if (!user) return res.status(404).json({ error: "User not found" });
+
+        const { currentPassword, newPassword } = req.body;
+
+        // Check if current password is correct
+        const isMatch = await bcrypt.compare(currentPassword, user.password);
+        if (!isMatch) {
+            return res.status(400).json({ error: "Current password is incorrect" });
+        }
+
+        // Update password
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+        user.password = hashedPassword;
+        await user.save();
+
+        res.json({ message: "Password updated successfully!" });
+    } catch (error) {
+        res.status(500).json({ error: "Server error: " + error.message });
+    }
+});
+
 export default router;
