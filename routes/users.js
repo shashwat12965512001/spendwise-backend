@@ -5,6 +5,17 @@ import jwt from "jsonwebtoken";
 
 const router = express.Router();
 
+router.get("/:id/login-history", async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id).select("loginHistory");
+        if (!user) return res.status(404).json({ error: "User not found" });
+
+        res.json({ loginHistory: user.loginHistory });
+    } catch (error) {
+        res.status(500).json({ error: "Error fetching login history" });
+    }
+});
+
 // User Login Route
 router.post("/login", async (req, res) => {
     try {
@@ -21,6 +32,25 @@ router.post("/login", async (req, res) => {
         if (!isMatch) {
             return res.status(400).json({ error: "Invalid credentials. Please try again." });
         }
+
+        // Extract device
+        const device = req.useragent.platform + " - " + req.useragent.browser;
+
+        // Extract IP (you can get it from req.ip or headers)
+        const ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+
+        // Extract location using geoip
+        const geo = geoip.lookup(ip);
+        const location = geo ? `${geo.city}, ${geo.country}` : "Unknown";
+
+        // Push login history
+        user.loginHistory.push({
+            device,
+            location,
+            date: new Date()
+        });
+
+        await user.save();
 
         // Generate JWT Token
         const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: "7d" });

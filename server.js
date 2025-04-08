@@ -6,6 +6,7 @@ import transactionsRoutes from "./routes/transactions.js";
 import usersRoutes from "./routes/users.js";
 import categoryRoutes from "./routes/categories.js";
 import settingsRoutes from "./routes/settings.js";
+import useragent from "express-useragent";
 
 dotenv.config();
 const app = express();
@@ -14,6 +15,7 @@ app.use(cors({
     origin: '*'
 }));
 app.use(express.json());
+app.use(useragent.express());
 
 mongoose.connect(process.env.MONGODB_URI, {
     useNewUrlParser: true,
