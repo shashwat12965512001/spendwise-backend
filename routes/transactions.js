@@ -60,7 +60,9 @@ router.get("/all/:userId", async (req, res) => {
     const { userId } = req.params;
 
     try {
-        const transactions = await Transaction.find({ userId }).sort({ date: -1 });
+        const transactions = await Transaction.find({
+            user_id: userId, // <-- match the field name exactly
+        }).sort({ date: -1 });
         res.json(transactions);
     } catch (error) {
         res.status(500).json({ error: "Error fetching transactions: " + error.message });
