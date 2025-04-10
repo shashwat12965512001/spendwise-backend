@@ -6,6 +6,7 @@ const transactionSchema = new mongoose.Schema({
     amount: { type: Number, required: true }, // Required
     category: { type: String, required: true }, // Required
     expense_type: { type: String, required: true }, // Required
+    user_id: { type: String, required: true }, // Required
 
     // Optional fields (default to empty string)
     upi_id: { type: String },

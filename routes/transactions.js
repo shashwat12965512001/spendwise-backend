@@ -23,7 +23,7 @@ router.get("/recent/:count?", async (req, res) => {
 // Add a new transaction
 router.post("/add", async (req, res) => {
     try {
-        const { name, date, amount, category, upi_id, transaction_id, expense_type } = req.body;
+        const { name, date, amount, category, upi_id, transaction_id, expense_type, user_id } = req.body;
 
         const newTransaction = new Transaction({
             name,
@@ -33,6 +33,7 @@ router.post("/add", async (req, res) => {
             expense_type,
             upi_id,
             transaction_id,
+            user_id,
             message: "",
             receiver_name: "",
         });
@@ -57,11 +58,11 @@ router.get("/all", async (req, res) => {
 // Update a transaction
 router.put("/update/:id", async (req, res) => {
     try {
-        const { name, date, amount, category, upi_id, transaction_id, expense_type } = req.body;
+        const { name, date, amount, category, upi_id, transaction_id, expense_type, user_id } = req.body;
 
         const updatedTransaction = await Transaction.findByIdAndUpdate(
             req.params.id,
-            { name, date, amount, category, upi_id, transaction_id, expense_type },
+            { name, date, amount, category, upi_id, transaction_id, expense_type, user_id },
             { new: true }
         );
 
