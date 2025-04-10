@@ -67,7 +67,6 @@ router.get("/all/:userId", async (req, res) => {
     }
 });
 
-
 // Update a transaction
 router.put("/update/:id", async (req, res) => {
     try {
