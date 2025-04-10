@@ -4,14 +4,15 @@ import Transaction from "../models/Transaction.js";
 const router = express.Router();
 
 // GET route to fetch recent transactions with a dynamic limit
-router.get("/recent/:count?", async (req, res) => {
-    try {
-        const count = parseInt(req.params.count) || 10; // Get number from request, default to 10
+router.get("/recent/:userId/:count?", async (req, res) => {
+    const { userId, count } = req.params;
 
-        // Fetch the latest transactions, sorted by createdAt in descending order
-        const transactions = await Transaction.find()
-            .sort({ createdAt: -1 }) // Sort by latest
-            .limit(count); // Get the specified number of records
+    try {
+        const limit = parseInt(count) || 10;
+
+        const transactions = await Transaction.find({ user_id: userId }) // 👈 filter by user_id
+            .sort({ createdAt: -1 }) // latest first
+            .limit(limit);
 
         res.status(200).json({ success: true, transactions });
     } catch (error) {
