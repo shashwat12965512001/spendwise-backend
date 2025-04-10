@@ -55,6 +55,19 @@ router.get("/all", async (req, res) => {
     }
 });
 
+// GET all transactions of a specific user
+router.get("/all/:userId", async (req, res) => {
+    const { userId } = req.params;
+
+    try {
+        const transactions = await Transaction.find({ userId }).sort({ date: -1 });
+        res.json(transactions);
+    } catch (error) {
+        res.status(500).json({ error: "Error fetching transactions: " + error.message });
+    }
+});
+
+
 // Update a transaction
 router.put("/update/:id", async (req, res) => {
     try {
