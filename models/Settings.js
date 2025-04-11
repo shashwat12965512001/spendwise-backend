@@ -8,6 +8,7 @@ const SettingsSchema = new mongoose.Schema({
         dailySummary: { type: Boolean, default: false },
         weeklySummary: { type: Boolean, default: true },
         hideDefaultSMSNotifications: { type: Boolean, default: false },
+        darkMode: { type: Boolean, default: false },
     }
 }, { timestamps: true });
 
