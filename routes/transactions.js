@@ -3,6 +3,26 @@ import Transaction from "../models/Transaction.js";
 
 const router = express.Router();
 
+// GET route to fetch transactions for a specific month and user
+router.get("/monthly/:userId/:year/:month", async (req, res) => {
+    const { userId, year, month } = req.params;
+
+    try {
+        // Construct regex pattern to match dates like "2024-04"
+        const monthStr = `${year}-${month.padStart(2, "0")}`; // ensure '04' instead of '4'
+
+        const transactions = await Transaction.find({
+            user_id: userId,
+            date: { $regex: `^${monthStr}` } // match dates starting with "2024-04"
+        }).sort({ date: 1 }); // sort oldest to newest, change to -1 if you want recent first
+
+        res.status(200).json({ success: true, transactions });
+    } catch (error) {
+        console.error("Error fetching monthly transactions:", error);
+        res.status(500).json({ success: false, error: "Server error: " + error.message });
+    }
+});
+
 // GET route to fetch recent transactions with a dynamic limit
 router.get("/recent/:userId/:count?", async (req, res) => {
     const { userId, count } = req.params;
