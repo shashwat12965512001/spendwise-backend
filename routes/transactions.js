@@ -3,22 +3,40 @@ import Transaction from "../models/Transaction.js";
 
 const router = express.Router();
 
-// GET route to fetch transactions for a specific month and user
-router.get("/monthly/:userId/:year/:month", async (req, res) => {
-    const { userId, year, month } = req.params;
+// GET route to fetch yearly transactions grouped by month
+router.get("/yearly/:userId/:year", async (req, res) => {
+    const { userId, year } = req.params;
 
     try {
-        // Construct regex pattern to match dates like "2024-04"
-        const monthStr = `${year}-${month.padStart(2, "0")}`; // ensure '04' instead of '4'
-
+        // Find all transactions for that user and year
         const transactions = await Transaction.find({
             user_id: userId,
-            date: { $regex: `^${monthStr}` } // match dates starting with "2024-04"
-        }).sort({ date: 1 }); // sort oldest to newest, change to -1 if you want recent first
+            date: { $regex: `^${year}` } // match year at the start like "2024"
+        }).sort({ date: 1 }); // sort by date
 
-        res.status(200).json({ success: true, transactions });
+        // Helper to map month number to name
+        const monthNames = [
+            "January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"
+        ];
+
+        // Group transactions by month name
+        const groupedByMonth = {};
+
+        for (const txn of transactions) {
+            const monthIndex = parseInt(txn.date.split("-")[1], 10) - 1;
+            const monthName = monthNames[monthIndex];
+
+            if (!groupedByMonth[monthName]) {
+                groupedByMonth[monthName] = [];
+            }
+
+            groupedByMonth[monthName].push(txn);
+        }
+
+        res.status(200).json({ success: true, transactions: groupedByMonth });
     } catch (error) {
-        console.error("Error fetching monthly transactions:", error);
+        console.error("Error fetching yearly transactions:", error);
         res.status(500).json({ success: false, error: "Server error: " + error.message });
     }
 });
