@@ -8,9 +8,15 @@ router.get("/yearly/:userId/:year", async (req, res) => {
     const { userId, year } = req.params;
 
     try {
+        const startOfYear = new Date(`${year}-01-01T00:00:00.000Z`);
+        const startOfNextYear = new Date(`${parseInt(year) + 1}-01-01T00:00:00.000Z`);
+
         const transactions = await Transaction.find({
             user_id: userId,
-            date: { $regex: `^${year}` }
+            date: {
+                $gte: startOfYear,
+                $lt: startOfNextYear
+            }
         }).sort({ date: 1 });
 
         const monthNames = [
@@ -21,7 +27,7 @@ router.get("/yearly/:userId/:year", async (req, res) => {
         const groupedByMonth = {};
 
         for (const txn of transactions) {
-            const monthIndex = parseInt(txn.date.split("-")[1], 10) - 1;
+            const monthIndex = txn.date.getMonth(); // 👈 use JS Date API
             const monthName = monthNames[monthIndex];
 
             if (!groupedByMonth[monthName]) {
