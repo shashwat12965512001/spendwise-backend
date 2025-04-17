@@ -3,24 +3,21 @@ import Transaction from "../models/Transaction.js";
 
 const router = express.Router();
 
-// GET route to fetch yearly transactions grouped by month
+// GET yearly transactions grouped by month
 router.get("/yearly/:userId/:year", async (req, res) => {
     const { userId, year } = req.params;
 
     try {
-        // Find all transactions for that user and year
         const transactions = await Transaction.find({
             user_id: userId,
-            date: { $regex: `^${year}` } // match year at the start like "2024"
-        }).sort({ date: 1 }); // sort by date
+            date: { $regex: `^${year}` }
+        }).sort({ date: 1 });
 
-        // Helper to map month number to name
         const monthNames = [
             "January", "February", "March", "April", "May", "June",
             "July", "August", "September", "October", "November", "December"
         ];
 
-        // Group transactions by month name
         const groupedByMonth = {};
 
         for (const txn of transactions) {
@@ -41,15 +38,15 @@ router.get("/yearly/:userId/:year", async (req, res) => {
     }
 });
 
-// GET route to fetch recent transactions with a dynamic limit
+// GET recent transactions
 router.get("/recent/:userId/:count?", async (req, res) => {
     const { userId, count } = req.params;
 
     try {
         const limit = parseInt(count) || 10;
 
-        const transactions = await Transaction.find({ user_id: userId }) // 👈 filter by user_id
-            .sort({ createdAt: -1 }) // latest first
+        const transactions = await Transaction.find({ user_id: userId })
+            .sort({ date: -1 }) // descending order
             .limit(limit);
 
         res.status(200).json({ success: true, transactions });
@@ -59,10 +56,26 @@ router.get("/recent/:userId/:count?", async (req, res) => {
     }
 });
 
-// Add a new transaction
+// POST add new transaction
 router.post("/add", async (req, res) => {
     try {
-        const { name, date, amount, category, upi_id, transaction_id, expense_type, user_id } = req.body;
+        const {
+            name = "",
+            date,
+            amount,
+            category,
+            upi_id = "",
+            transaction_id = "",
+            message = "",
+            receiver_name = "",
+            expense_type = "",
+            user_id,
+            address = ""
+        } = req.body;
+
+        if (!user_id || !date || !amount || !category) {
+            return res.status(400).json({ error: "Missing required fields" });
+        }
 
         const newTransaction = new Transaction({
             name,
@@ -70,11 +83,12 @@ router.post("/add", async (req, res) => {
             amount,
             category,
             expense_type,
+            user_id,
             upi_id,
             transaction_id,
-            user_id,
-            message: "",
-            receiver_name: "",
+            message,
+            receiver_name,
+            address
         });
 
         await newTransaction.save();
@@ -84,7 +98,7 @@ router.post("/add", async (req, res) => {
     }
 });
 
-// Get all transactions
+// GET all transactions (admin/debug use)
 router.get("/all", async (req, res) => {
     try {
         const transactions = await Transaction.find().sort({ date: -1 });
@@ -94,28 +108,57 @@ router.get("/all", async (req, res) => {
     }
 });
 
-// GET all transactions of a specific user
+// GET all transactions for a specific user
 router.get("/all/:userId", async (req, res) => {
     const { userId } = req.params;
 
     try {
         const transactions = await Transaction.find({
-            user_id: userId, // <-- match the field name exactly
+            user_id: userId
         }).sort({ date: -1 });
+
         res.json(transactions);
     } catch (error) {
         res.status(500).json({ error: "Error fetching transactions: " + error.message });
     }
 });
 
-// Update a transaction
+// PUT update transaction
 router.put("/update/:id", async (req, res) => {
     try {
-        const { name, date, amount, category, upi_id, transaction_id, expense_type, user_id } = req.body;
+        const {
+            name = "",
+            date,
+            amount,
+            category,
+            upi_id = "",
+            transaction_id = "",
+            message = "",
+            receiver_name = "",
+            expense_type = "",
+            user_id,
+            address = ""
+        } = req.body;
+
+        if (!user_id || !date || !amount || !category) {
+            return res.status(400).json({ error: "Missing required fields" });
+        }
 
         const updatedTransaction = await Transaction.findByIdAndUpdate(
             req.params.id,
-            { name, date, amount, category, upi_id, transaction_id, expense_type, user_id },
+            {
+                name,
+                date,
+                amount,
+                category,
+                upi_id,
+                transaction_id,
+                message,
+                receiver_name,
+                expense_type,
+                user_id,
+                address
+            },
             { new: true }
         );
 
@@ -125,7 +168,7 @@ router.put("/update/:id", async (req, res) => {
     }
 });
 
-// Delete a transaction
+// DELETE transaction
 router.delete("/delete/:id", async (req, res) => {
     try {
         await Transaction.findByIdAndDelete(req.params.id);

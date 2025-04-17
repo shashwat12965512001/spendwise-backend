@@ -1,18 +1,22 @@
 import mongoose from "mongoose";
 
 const transactionSchema = new mongoose.Schema({
-    name: { type: String, required: true }, // Required
-    date: { type: String, required: true }, // Required
-    amount: { type: Number, required: true }, // Required
-    category: { type: String, required: true }, // Required
-    expense_type: { type: String, required: true }, // Required
-    user_id: { type: String, required: true }, // Required
+    user_id: { type: String, required: true }, // 👈 Mandatory
+    name: { type: String, default: "" },       // 👈 Optional
+    expense_type: { type: String, default: "" }, // 👈 Optional
 
-    // Optional fields (default to empty string)
-    upi_id: { type: String },
-    transaction_id: { type: String },
+    amount: { type: Number, required: true },
+    category: { type: String, required: true },
+    date: { type: String, required: true }, // Storing as string for now (e.g., ISO string)
+
+    // Optional fields
+    upi_id: { type: String, default: "" },
+    transaction_id: { type: String, default: "" },
     message: { type: String, default: "" },
     receiver_name: { type: String, default: "" },
+
+    // Extra optional fields from raw bank data
+    address: { type: String, default: "" } // e.g., "VA-FEDBNK"
 });
 
 const Transaction = mongoose.model("Transaction", transactionSchema);
