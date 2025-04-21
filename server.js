@@ -2,11 +2,13 @@ import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import mongoose from "mongoose";
+import useragent from "express-useragent";
+
 import transactionsRoutes from "./routes/transactions.js";
 import usersRoutes from "./routes/users.js";
 import categoryRoutes from "./routes/categories.js";
 import settingsRoutes from "./routes/settings.js";
-import useragent from "express-useragent";
+import summariesRoutes from "./routes/summaries.js";
 
 dotenv.config();
 const app = express();
@@ -27,6 +29,7 @@ app.use("/api/transactions", transactionsRoutes);
 app.use("/api/users", usersRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/settings", settingsRoutes);
+app.use("/api/summaries", summariesRoutes);
 
 app.get("/cors-check", (req, res) => {
     res.setHeader("Access-Control-Allow-Origin", "*");
