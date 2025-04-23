@@ -6,13 +6,13 @@ const router = express.Router();
 // POST /api/deals
 router.post('/deals', async (req, res) => {
     try {
-        const { id, name, data } = req.body;
+        const { name, data } = req.body;
 
-        if (!id || !name || !data) {
-            return res.status(400).json({ message: 'Missing id, name or data' });
+        if (!name || !data) {
+            return res.status(400).json({ message: 'Missing name or data' });
         }
 
-        const newDeal = new ScrapedDeal({ id, name, data });
+        const newDeal = new ScrapedDeal({ name, data });
         await newDeal.save();
 
         res.status(201).json({ message: 'Deal saved successfully', deal: newDeal });
@@ -21,5 +21,6 @@ router.post('/deals', async (req, res) => {
         res.status(500).json({ message: 'Internal server error' });
     }
 });
+
 
 export default router;
