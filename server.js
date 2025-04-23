@@ -9,6 +9,7 @@ import usersRoutes from "./routes/users.js";
 import categoryRoutes from "./routes/categories.js";
 import settingsRoutes from "./routes/settings.js";
 import summariesRoutes from "./routes/summaries.js";
+import platformRoutes from "./routes/platform.js";
 
 dotenv.config();
 const app = express();
@@ -30,6 +31,7 @@ app.use("/api/users", usersRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/settings", settingsRoutes);
 app.use("/api/summaries", summariesRoutes);
+app.use("/api/platform", platformRoutes);
 
 app.get("/cors-check", (req, res) => {
     res.setHeader("Access-Control-Allow-Origin", "*");

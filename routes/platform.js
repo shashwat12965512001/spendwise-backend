@@ -1,18 +1,18 @@
 import express from "express";
-import ScrapedDealSchema from "../models/Platform.js";
+import ScrapedDeal from "../models/Platform.js"; // Make sure filename and model name match
 
 const router = express.Router();
 
 // POST /api/deals
 router.post('/deals', async (req, res) => {
     try {
-        const { platform, data } = req.body;
+        const { id, name, data } = req.body;
 
-        if (!platform || !data) {
-            return res.status(400).json({ message: 'Missing platform or data' });
+        if (!id || !name || !data) {
+            return res.status(400).json({ message: 'Missing id, name or data' });
         }
 
-        const newDeal = new ScrapedDeal({ platform, data });
+        const newDeal = new ScrapedDeal({ id, name, data });
         await newDeal.save();
 
         res.status(201).json({ message: 'Deal saved successfully', deal: newDeal });
