@@ -1,5 +1,5 @@
 import express from "express";
-import ScrapedDeal from "../models/Platform.js"; // Make sure filename and model name match
+import ScrapedDeal from "../models/Platform.js";
 
 const router = express.Router();
 
@@ -21,6 +21,5 @@ router.post('/deals', async (req, res) => {
         res.status(500).json({ message: 'Internal server error' });
     }
 });
-
 
 export default router;
