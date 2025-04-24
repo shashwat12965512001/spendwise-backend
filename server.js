@@ -14,13 +14,12 @@ import platformRoutes from "./routes/platform.js";
 dotenv.config();
 const app = express();
 
-// ✅ Always set CORS before anything else
 app.use(cors({
     origin: [
         "https://spendwise.weblytechnolab.com",
         "https://www.amazon.com",
-        "https://www.amazon.in",         // ✅ Add this
-        "https://flipkart.com",          // ✅ Add other platforms you're testing on too
+        "https://www.amazon.in",
+        "https://flipkart.com",
         "https://www.flipkart.com",
         "https://meesho.com",
         "https://www.meesho.com",
