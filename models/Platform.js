@@ -1,8 +1,8 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const ScrapedDealSchema = new mongoose.Schema({
     name: String,
     data: mongoose.Schema.Types.Mixed
 }, { timestamps: true });
 
-module.exports = mongoose.model("ScrapedDeal", ScrapedDealSchema);
+export default mongoose.models.Schema || mongoose.model("ScrapedDeal", ScrapedDealSchema);
