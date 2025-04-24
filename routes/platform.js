@@ -64,4 +64,33 @@ router.post('/deals', async (req, res) => {
     }
 });
 
+// GET /api/deals
+router.get('/deals', async (req, res) => {
+    try {
+        const deals = await ScrapedDeal.find();
+        res.status(200).json(deals);
+    } catch (err) {
+        console.error('❌ Error fetching all deals:', err);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+// GET /api/deals/:platformName
+router.get('/deals/:platformName', async (req, res) => {
+    try {
+        const { platformName } = req.params;
+
+        const deal = await ScrapedDeal.findOne({ name: platformName });
+        if (!deal) {
+            return res.status(404).json({ message: `No deals found for platform: ${platformName}` });
+        }
+
+        res.status(200).json(deal);
+    } catch (err) {
+        console.error(`❌ Error fetching deals for ${req.params.platformName}:`, err);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+
 export default router;
