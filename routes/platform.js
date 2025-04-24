@@ -92,5 +92,4 @@ router.get('/deals/:platformName', async (req, res) => {
     }
 });
 
-
 export default router;
