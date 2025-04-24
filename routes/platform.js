@@ -6,19 +6,58 @@ const router = express.Router();
 // POST /api/deals
 router.post('/deals', async (req, res) => {
     try {
-        const { name, data } = req.body;
+        const { name, data: newData } = req.body;
 
-        if (!name || !data) {
+        if (!name || !newData) {
             return res.status(400).json({ message: 'Missing name or data' });
         }
 
-        const updatedDeal = await ScrapedDeal.findOneAndUpdate(
-            { name },
-            { $set: { data } },
-            { upsert: true, new: true } // upsert = insert if not exists
-        );
+        // Fetch existing entry if any
+        let existing = await ScrapedDeal.findOne({ name });
 
-        res.status(200).json({ message: 'Deal saved/updated successfully', deal: updatedDeal });
+        if (!existing) {
+            // No record yet, so insert fresh
+            const newDeal = new ScrapedDeal({ name, data: newData });
+            await newDeal.save();
+            return res.status(201).json({ message: 'New deal saved', deal: newDeal });
+        }
+
+        // Merge logic
+        const updatedData = { ...existing.data };
+
+        // Loop through keys in newData
+        for (const key in newData) {
+            if (Array.isArray(newData[key])) {
+                if (!Array.isArray(updatedData[key])) updatedData[key] = [];
+
+                // Append only unique items
+                const existingItems = updatedData[key];
+                const newItems = newData[key];
+
+                // Merge arrays, avoid duplicates based on JSON.stringify
+                const mergedArray = [...existingItems];
+
+                newItems.forEach(item => {
+                    const isDuplicate = mergedArray.some(existingItem =>
+                        JSON.stringify(existingItem) === JSON.stringify(item)
+                    );
+                    if (!isDuplicate) {
+                        mergedArray.push(item);
+                    }
+                });
+
+                updatedData[key] = mergedArray;
+            } else {
+                // If it's not an array, just overwrite/merge
+                updatedData[key] = newData[key];
+            }
+        }
+
+        // Update the document
+        existing.data = updatedData;
+        await existing.save();
+
+        res.status(200).json({ message: 'Deal updated with merge', deal: existing });
     } catch (err) {
         console.error('❌ Error saving deal:', err);
         res.status(500).json({ message: 'Internal server error' });
