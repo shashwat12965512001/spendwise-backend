@@ -21,18 +21,7 @@ const startServer = async () => {
         const app = express();
 
         app.use(cors({
-            origin: [
-                "https://spendwise.weblytechnolab.com",
-                "https://www.amazon.com",
-                "https://www.amazon.in",
-                "https://flipkart.com",
-                "https://www.flipkart.com",
-                "https://meesho.com",
-                "https://www.meesho.com",
-                "https://www.ajio.com",
-                "https://www.myntra.com",
-                "http://localhost:3000",
-            ],
+            origin: "*",
             methods: ["GET", "POST", "PUT", "DELETE"],
             allowedHeaders: ["Content-Type", "Authorization"]
         }));
