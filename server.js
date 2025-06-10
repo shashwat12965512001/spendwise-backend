@@ -24,7 +24,8 @@ app.use(cors({
         "https://meesho.com",
         "https://www.meesho.com",
         "https://www.ajio.com",
-        "https://www.myntra.com"
+        "https://www.myntra.com",
+        "http://localhost:3000",
     ],
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"]
