@@ -34,14 +34,7 @@ app.use(cors({
 app.use(express.json());
 app.use(useragent.express());
 
-try {
-    mongoose.connect(process.env.MONGODB_URI).then(() => console.log("✅ MongoDB Connected"))
-        .catch(err => console.error("❌ DB Connection Error:", err));
-} catch (error) {
-    console.error("❌ Error connecting to MongoDB:", error);
-    process.exit(1);
-}
-
+mongoose.connect(process.env.MONGODB_URI).then(() => console.log("✅ MongoDB Connected")).catch(err => console.error("❌ DB Connection Error:", err));
 
 app.use("/api/transactions", transactionsRoutes);
 app.use("/api/users", usersRoutes);
